@@ -1,0 +1,10 @@
+pymongo
+fastapi
+openai
+uvicorn
+python-dotenv
+google-auth
+google-auth-oauthlib
+python-dateutil
+Flask-SocketIO
+chromadb
