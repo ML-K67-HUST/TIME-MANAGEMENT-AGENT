@@ -12,4 +12,6 @@ class Settings:
         self.chroma_endpoint = os.getenv("chroma_client_url")
         self.chroma_model = os.getenv("chroma_model")
         self.embedding_client_url = os.getenv("embedding_client_url")
+
+        self.backend_url = os.getenv("BACKEND_URL")
 settings = Settings()

@@ -8,6 +8,11 @@ services:
       - .:/app
     environment:
       - PYTHONUNBUFFERED=1
-    depends_on: []
     ports:
       - "5001:5001"
+    networks:
+      - timenest
+
+networks:
+  timenest:
+    external: true

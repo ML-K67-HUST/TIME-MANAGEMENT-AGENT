@@ -2,8 +2,10 @@ import os
 import json
 from datetime import datetime
 ### TEST
+def get_user_name():
+    return "user's name: dinh van dang"
 def get_weather(latitude, longitude):
-    return "39 celcius"
+    return "the current temperature: 39 celcius"
 
 ### SAVE CONSTRAINT
 def saving_constraint(content):

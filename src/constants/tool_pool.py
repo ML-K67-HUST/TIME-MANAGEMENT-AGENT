@@ -1,5 +1,5 @@
 
-from src.utils.function_calling import *
+from utils.function_calling import *
 TOOL_TEST = [{
     "type": "function",
     "function": {
@@ -16,7 +16,21 @@ TOOL_TEST = [{
         },
         "strict": True
     }
-}]
+},{
+    "type": "function",
+    "function": {
+        "name": "get_user_name",
+        "description": "Get the full name of your person you chatting with ",
+        "parameters": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": False
+        },
+        "strict": True
+    }
+}
+]
 TOOLS = [
     {
         "type": "function",
@@ -122,5 +136,6 @@ TOOLS = [
 ]
 
 FUNCTION_MAP = {
-    "get_weather":get_weather
+    "get_weather":get_weather,
+    "get_user_name":get_user_name
 }

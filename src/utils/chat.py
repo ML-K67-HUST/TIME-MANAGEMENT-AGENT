@@ -1,24 +1,15 @@
-import openai
+import openai 
 from config import settings
-from constants.prompt_library import SYSTEM_PROMPT
 
-async def generate_chat_completions(prompt: str, history=[] , system_prompt=SYSTEM_PROMPT):
+async def generate_chat_completions( prompt: str,system_prompt : str):
     client = openai.OpenAI(
         api_key=settings.together_api_key,
         base_url="https://api.together.xyz/v1",
     )
+
     messages = [
         {"role": "system", "content": system_prompt},
     ]
-    for message in history:
-        messages.append({
-            "role":"user",
-            "content": message["user"]
-        })
-        messages.append({
-            "role":"assistant",
-            "content": message["assistant"]
-        })
 
     messages.append({
         "role":"user",
