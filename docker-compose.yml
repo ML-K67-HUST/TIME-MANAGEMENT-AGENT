@@ -1,15 +1,33 @@
-version: '3.8'
+version: '3.9'
 
 services:
   app:
-    build: .
+    build:
+      context: ./src
+      dockerfile: Dockerfile
     container_name: timenest_agent
     volumes:
       - .:/app
+    env_file:
+      - .env
     environment:
       - PYTHONUNBUFFERED=1
     ports:
       - "5001:5001"
+    networks:
+      - timenest
+    depends_on:
+      - chroma
+
+  chroma:
+    build:
+      context: ./chroma
+      dockerfile: Dockerfile
+    container_name: timenest_chroma_api
+    volumes:
+      - ./chroma/data:/chroma/chroma
+    ports:
+      - "8003:8003"
     networks:
       - timenest
 

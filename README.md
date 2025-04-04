@@ -5,6 +5,7 @@
 Tải requiremenst.txt về trước, sau đó lên agent:
 
 ```
+docker network create timenest
 docker-compose up --build
 ```
 
