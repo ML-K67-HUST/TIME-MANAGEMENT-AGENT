@@ -1,5 +1,5 @@
 import requests
-
+from config import settings
 
 def get_history(userid:int, token:str):
     headers = {
@@ -12,7 +12,7 @@ def get_history(userid:int, token:str):
         'userid': userid,
     }
 
-    response = requests.post('http://app:5050/conversation/query', headers=headers, json=json_data)   
+    response = requests.post(f'{settings.backend_url}/conversation/query', headers=headers, json=json_data)   
     return response.json()
 
 def extract_chat_history(api_response: dict, limit: int = 10):
@@ -44,5 +44,5 @@ def update_history(userid: int, token:str, user: str, assistant:str):
         },
     }
 
-    response = requests.post('http://app:5050/conversation/update', headers=headers, json=json_data)
+    response = requests.post(f'{settings.backend_url}/conversation/update', headers=headers, json=json_data)
     return response.json()

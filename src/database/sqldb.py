@@ -1,7 +1,8 @@
 
 import requests
+from config import settings
 def get_user_info(userid, token):
-    url = f"http://app:5050/sqldb/users/{userid}"
+    url = f"{settings.backend_url}/sqldb/users/{userid}"
 
     payload = {}
     headers = {
@@ -14,7 +15,7 @@ def get_user_info(userid, token):
     
 
 def get_user_tasks(userid, token):
-    url = f"http://app:5050/sqldb/tasks/{userid}"
+    url = f"{settings.backend_url}/sqldb/tasks/{userid}"
 
     payload = {}
     headers = {
