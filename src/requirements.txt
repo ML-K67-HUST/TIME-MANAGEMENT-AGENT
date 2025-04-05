@@ -9,3 +9,4 @@ chromadb
 googlesearch-python
 trafilatura
 lxml-html-clean
+redis==5.0.1
