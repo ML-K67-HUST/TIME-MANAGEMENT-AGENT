@@ -1,5 +1,7 @@
 from chroma.services.embedder import Embedder
 from chroma.utils import generate_embedding
+from utlis import google_search
+from database import vectordb
 import chromadb
 import os
 
@@ -30,7 +32,27 @@ def search_knowledge(user_information: dict):
 
     # return search result -> knowledges
 
-    pass
+    job = user_information.get("job", "professional")
+
+    questions = [
+        f"What are the latest trends in {job}?",
+        f"What tools should a {job} master in 2024?",
+        f"What are common challenges faced by a {job}?",
+        f"What online resources or communities are valuable for a {job}?",
+        f"What productivity techniques help a {job} succeed?"
+    ]
+
+    knowledges = []
+    for question in questions:
+        search_results = google_search(question)
+        if search_results:
+            knowledges.append({
+                "question": question,
+                "results": search_results
+            })
+
+    return knowledges
+
 
 
 def store_knowledge(knowledges):
@@ -43,7 +65,11 @@ def store_knowledge(knowledges):
         data=embedder
     )
     """
-    pass
+    
+    for item in knowledges:
+        content = f"Question: {item['question']}\nResults: {item['results']}"
+        vectordb.insert(content)
+
 
 
 if __name__ == "__main__":
