@@ -29,9 +29,40 @@ class QueryData(BaseModel):
     where_document: Optional[Dict[str, Any]] = None
     rerank: bool = False
 
+class EmbeddingRequest(BaseModel):
+    input: str
+
+class EmbeddingResponse(BaseModel):
+    object: str = "list"
+    data: list
+    model: str
+    usage: dict
+
 @app.get("/")
 async def root():
     return {"message": "ChromaDB API is running", "chroma_path": CHROMA_PATH}
+
+@app.post("/v1/embeddings", response_model=EmbeddingResponse)
+async def embeddings(request: EmbeddingRequest):
+    input_text = request.input
+    if not input_text:
+        raise HTTPException(status_code=400, detail="No input text provided")
+
+    # Generate embeddings
+    embeddings = generate_embedding(input_text)
+
+    # Construct the response in OpenAI format
+    response = {
+        "object": "list",
+        "data": [{"object": "embedding", "embedding": embeddings, "index": 0}],
+        "model": "BAAI/bge-base-en-v1.5",
+        "usage": {
+            "prompt_tokens": len(input_text.split()),
+            "total_tokens": len(input_text.split()),
+        },
+    }
+
+    return response
 
 @app.get("/collections")
 async def list_collections():

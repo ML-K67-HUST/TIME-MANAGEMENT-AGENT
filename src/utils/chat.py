@@ -1,4 +1,5 @@
 import openai 
+import requests
 from config import settings
 
 async def generate_chat_completions( prompt: str,system_prompt : str):
@@ -29,3 +30,24 @@ async def generate_chat_completions( prompt: str,system_prompt : str):
     #         yield batch.choices[0].delta.content
 
     return response.choices[0].message.content
+
+def generate_chat_completion_openai(
+        messages: list, 
+    ):
+
+    # headers = {
+    #     'Content-Type': 'application/json',
+    # }
+
+    json_data = {
+        'model': 'gpt-3.5-turbo',
+        'messages': messages
+    }
+
+    response = requests.post(
+        'http://gpt-nha-lam:8080/v1/chat/completions', 
+        # headers=headers, 
+        json=json_data
+    )
+    print(response.text)
+    return response.json()

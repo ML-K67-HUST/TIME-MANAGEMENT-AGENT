@@ -16,21 +16,30 @@ services:
       - "5001:5001"
     networks:
       - timenest
-    depends_on:
-      - chroma
+    # depends_on:
+    #   - chroma
+      # - gpt-nha-lam
 
-  chroma:
-    build:
-      context: ./chroma
-      dockerfile: Dockerfile
-    container_name: timenest_chroma_api
-    volumes:
-      - ./chroma/data:/chroma/chroma
-    ports:
-      - "8003:8003"
-    networks:
-      - timenest
+  # chroma:
+  #   build:
+  #     context: ./chroma
+  #     dockerfile: Dockerfile
+  #   container_name: timenest_chroma_api
+  #   volumes:
+  #     - ./chroma/data:/chroma/chroma
+  #   ports:
+  #     - "8003:8003"
+  #   networks:
+  #     - timenest
 
+  # gpt-nha-lam:
+  #   image: ghcr.io/aurora-develop/aurora:latest
+  #   container_name: gpt-nha-lam
+  #   ports:
+  #     - "8080:8080"
+  #   networks:
+  #     - timenest
+  #   restart: unless-stopped
 networks:
   timenest:
     external: true
