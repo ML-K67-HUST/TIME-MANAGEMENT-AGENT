@@ -66,7 +66,7 @@ def execute_query(query: str):
     
     return result
     
-def execute_query_if_needed(query: str, force_execution=False):
+def execute_query_if_needed(query: str, decider: bool, force_execution=False):
     """
     Execute a function call only if the query likely requires a tool.
     
@@ -77,6 +77,10 @@ def execute_query_if_needed(query: str, force_execution=False):
     Returns:
         dict: Function execution result or empty result
     """
+    if not decider:
+        return {
+            'result':"No need to execute database modification"
+        }
     if not force_execution and not likely_needs_function_call(query):
         return {
             'function': None,

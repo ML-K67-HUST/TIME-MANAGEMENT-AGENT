@@ -1,6 +1,8 @@
 import requests
 from config import settings
-def query_for_about_us(prompt):
+def query_for_about_us(prompt, decider):
+    if not decider:
+        return "No need to get `about us` information"
     headers = {
         'accept': 'application/json',
         'Content-Type': 'application/json',
@@ -36,3 +38,15 @@ def query_for_about_us(prompt):
         return retrieved_data
     else:
         return "Error happened when retrieving ABOUT-US data"
+
+
+def query_for_domain_knowledge(prompt,decider):
+    if not decider:
+        return "No need to retrieve tips for task management"
+    return ""
+
+
+def query_for_task_management_tips(prompt, decider):
+    if not decider:
+        return "No need to retrieve tips for task management"
+    return ""
