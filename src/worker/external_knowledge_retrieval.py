@@ -55,20 +55,33 @@ def search_knowledge(user_information: dict):
 
 
 
-def store_knowledge(knowledges):
-    embedder = Embedder()
-    # embedder.generate_embedding(knowledges)
+import requests
 
+def chunk_text(text, chunk_size=300):
     """
-    add_documents(
-        collection_name="knowledge",
-        data=embedder
-    )
+    Splits text into smaller chunks.
     """
-    
+    words = text.split()
+    return [" ".join(words[i:i + chunk_size]) for i in range(0, len(words), chunk_size)]
+
+def store_knowledge(knowledges):
+    api_url = "https://timenest-vector-store-production.up.railway.app/documents"
+
     for item in knowledges:
         content = f"Question: {item['question']}\nResults: {item['results']}"
-        vectordb.insert(content)
+        chunks = chunk_text(content)
+
+        try:
+            response = requests.post(api_url, json={"text_chunks": chunks})
+
+            if response.status_code == 200:
+                print(f"[✔] Sent to vector store: {item['results']}")
+                vectordb.insert(content)
+            else:
+                print(f"[✖] Failed to send: {item['results']} (Status: {response.status_code})")
+
+        except requests.exceptions.RequestException as e:
+            print(f"[⚠] Error sending '{item['question']}': {e}")
 
 
 
