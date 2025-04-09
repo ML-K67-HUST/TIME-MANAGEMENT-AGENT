@@ -62,26 +62,31 @@ def chunk_text(text, chunk_size=300):
     Splits text into smaller chunks.
     """
     words = text.split()
-    return [" ".join(words[i:i + chunk_size]) for i in range(0, len(words), chunk_size)]
-
+    chunks = [" ".join(words[i:i + chunk_size]) for i in range(0, len(words), chunk_size)]
+    return chunks
 def store_knowledge(knowledges):
-    api_url = "https://timenest-vector-store-production.up.railway.app/documents"
+    headers = {
+    'accept': 'application/json',
+    'Content-Type': 'application/json',
+    }
 
-    for item in knowledges:
-        content = f"Question: {item['question']}\nResults: {item['results']}"
-        chunks = chunk_text(content)
+    params = {
+        'vector_store': 'milvus',
+    }
 
-        try:
-            response = requests.post(api_url, json={"text_chunks": chunks})
-
-            if response.status_code == 200:
-                print(f"[✔] Sent to vector store: {item['results']}")
-                vectordb.insert(content)
-            else:
-                print(f"[✖] Failed to send: {item['results']} (Status: {response.status_code})")
-
-        except requests.exceptions.RequestException as e:
-            print(f"[⚠] Error sending '{item['question']}': {e}")
+    json_data = {
+        'documents': chunks,
+        'metadatas': [question]*len(chunks),
+    }
+    collection_name = "knowledge_user"
+    response = requests.post(
+        f'https://timenest-vector-store-production.up.railway.app/collections/{collection_name}/add',
+        params=params,
+        headers=headers,
+        json=json_data,
+    )
+    if response.status_code == 200:
+        print("successfull")
 
 
 
