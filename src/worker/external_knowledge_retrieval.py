@@ -24,7 +24,17 @@ def add_documents(collection_name: str, data):
         ids=data.ids
     )
     return {"message": f"Added {len(data.documents)} documents to collection '{collection_name}'"}
-    
+
+def return_question(user_information:dict):
+    job = user_information.get("job", "professional")
+    questions = [
+        f"What are the latest trends in {job}?",
+        f"What tools should a {job} master in 2024?",
+        f"What are common challenges faced by a {job}?",
+        f"What online resources or communities are valuable for a {job}?",
+        f"What productivity techniques help a {job} succeed?"
+    ]
+    return questions
 def search_knowledge(user_information: dict):
     # format user information
 
@@ -75,8 +85,8 @@ def store_knowledge(knowledges):
     }
 
     json_data = {
-        'documents': chunks,
-        'metadatas': [question]*len(chunks),
+        'documents': chunk_text(return_question(user_information:dict), chunk_size=300),
+        'metadatas': return_question(user_information:dict)*len(chunk_text(questions[for question in questions], chunk_size=300)),
     }
     collection_name = "knowledge_user"
     response = requests.post(
