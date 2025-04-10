@@ -1,16 +1,18 @@
 import json
 from datetime import datetime
-
+from zoneinfo import ZoneInfo 
 
 def get_current_time_info():
-    now = datetime.utcnow()
-    today_str = now.strftime("%Y-%m-%d, %H:%M UTC")
+    now = datetime.utcnow().replace(tzinfo=ZoneInfo("UTC")).astimezone(ZoneInfo("Asia/Ho_Chi_Minh"))
+    today_str = now.strftime("%Y-%m-%d, %H:%M GMT+7")
     hour = now.hour
-    
-    time_of_day = "morning" if 5 <= hour < 12 \
-        else "afternoon" if 12 <= hour < 18 \
+
+    time_of_day = (
+        "morning" if 5 <= hour < 12
+        else "afternoon" if 12 <= hour < 18
         else "night"
-    
+    )
+    print(F"DATETIME NOW: {today_str, time_of_day}")
     return today_str, time_of_day
 
 

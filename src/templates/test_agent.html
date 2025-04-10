@@ -378,14 +378,14 @@
                 chatContainer.scrollTop = chatContainer.scrollHeight;
 
                 // Gọi API với .then()
-                fetch('http://0.0.0.0:5001/chat/chat_completion', {
+                fetch('/chat/chat_completion', {
                     method: 'POST',
                     headers: {
                         'accept': 'application/json',
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        userid: 0,
+                        userid: 7,
                         message: message,
                         token: 'string'
                     })
