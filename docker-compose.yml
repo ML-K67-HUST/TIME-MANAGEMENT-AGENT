@@ -9,7 +9,7 @@ services:
     volumes:
       - .:/app
     env_file:
-      - .env
+      - ./src/.env
     environment:
       - PYTHONUNBUFFERED=1
     ports:
