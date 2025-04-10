@@ -34,7 +34,7 @@ async def generate_chat_completions(userid:int, token:str, prompt: str, history=
     #     base_url="https://api.together.xyz/v1",
     # )
     decider = classify_prompt(prompt)
-
+    print("#### DECIDER: #### ",decider)
     client = openai.OpenAI(
         api_key=settings.gemini_api_key,
         base_url=settings.gemini_base_url,
@@ -44,7 +44,7 @@ async def generate_chat_completions(userid:int, token:str, prompt: str, history=
     start_time_tasks = time.time()
     user_info_task = asyncio.create_task(get_user_info_async(userid, token))
     task_history_task = asyncio.create_task(get_task_history_async(userid, token))
-    function_calling_task = asyncio.create_task(execute_function_call_async(prompt,decider=decider["function_calling"]))
+    function_calling_task = asyncio.create_task(execute_function_call_async(userid=userid,prompt=prompt,decider=decider["function_calling"]))
     
     start_time_now = time.time()
     now = get_current_time_info()
@@ -89,8 +89,8 @@ async def generate_chat_completions(userid:int, token:str, prompt: str, history=
     )
     
     logger.info(f"System prompt size: {len(formatted_system_prompt)} characters")
-    print(f"System prompt content: {formatted_system_prompt[:500]}... (truncated)")
-    
+    # print(f"System prompt content: {formatted_system_prompt[:500]}... (truncated)")
+    print("FUNCTION CALLING: ",function_calling['result'])
     logger.info(f"Component sizes - NOW_TIME: {len(str(now))}, MESSAGE: {len(str(function_calling['result']))}, "
                 f"ABOUT_US: {len(str(about_us))}, USER_INFO: {len(str(user_info))}, "
                 f"TASK_HISTORY: {len(str(task_history))}, TIME_MANAGEMENT: {len(str(time_management_tips))}, "
@@ -181,5 +181,6 @@ async def get_user_info_async(userid, token):
 async def get_task_history_async(userid, token):
     return get_cached_task_history(userid, token)
 
-async def execute_function_call_async(prompt,decider):
-    return await asyncio.to_thread(execute_query_if_needed, prompt,decider)
+async def execute_function_call_async(userid, prompt, decider):
+    print("1")
+    return execute_query_if_needed(userid=userid, query=prompt,decider=decider)

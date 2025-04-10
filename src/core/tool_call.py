@@ -2,7 +2,9 @@ import openai
 import json
 import time
 from config import settings
-from constants.tool_pool import FUNCTION_MAP, TOOL_TEST
+from constants.tool_pool import FUNCTION_MAP, TOOL_TEST,TOOLS
+from constants.prompt_library import FUNCTION_CALLING_PROMPT
+from utils.format_message import get_current_time_info
 from database.caching import redis_cache
 
 client = openai.OpenAI(
@@ -12,7 +14,8 @@ client = openai.OpenAI(
 
 FUNCTION_CACHE_TTL = 600
 
-def execute_query(query: str):
+def execute_query(userid,query: str):
+    print(3)
     """
     Execute a function call based on the user query with caching.
     
@@ -29,12 +32,17 @@ def execute_query(query: str):
         return cached_result
     
     start_time = time.time()
-    messages = [{"role": "user", "content": query}]
+    messages = [
+        {"role": "system", "content": FUNCTION_CALLING_PROMPT.format(
+            NOW_TIME=get_current_time_info()
+        )},
+        {"role": "user", "content": query}
+    ]
 
     completion = client.chat.completions.create(
         messages=messages,
         model="meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
-        tools=TOOL_TEST,
+        tools=TOOLS,
         temperature=0.1,  # Lower temperature for more deterministic outputs
         max_tokens=300,   # Limit token generation to what's needed
         top_p=0.9,        # Focus on more likely tokens
@@ -51,14 +59,14 @@ def execute_query(query: str):
     if tool_calls:
         function_name = tool_calls[0].function.name
         function_arguments = json.loads(tool_calls[0].function.arguments)
-
+        function_arguments["userid"] = userid
         if function_name in FUNCTION_MAP:
             result = {
                 'function': function_name,
                 'args': function_arguments,
                 'result': FUNCTION_MAP[function_name](**function_arguments)
             }
-    
+
     redis_cache.set(cache_key, result, ttl=FUNCTION_CACHE_TTL)
     
     end_time = time.time()
@@ -66,7 +74,7 @@ def execute_query(query: str):
     
     return result
     
-def execute_query_if_needed(query: str, decider: bool, force_execution=False):
+def execute_query_if_needed(userid, query: str, decider, force_execution=False):
     """
     Execute a function call only if the query likely requires a tool.
     
@@ -77,18 +85,14 @@ def execute_query_if_needed(query: str, decider: bool, force_execution=False):
     Returns:
         dict: Function execution result or empty result
     """
+    print(2)
     if not decider:
         return {
             'result':"No need to execute database modification"
         }
-    if not force_execution and not likely_needs_function_call(query):
-        return {
-            'function': None,
-            'args': None,
-            'result': ""
-        }
+
     
-    return execute_query(query)
+    return execute_query(userid,query)
 
 def likely_needs_function_call(query: str):
     """

@@ -33,101 +33,41 @@ TOOL_TEST = [{
 ]
 TOOLS = [
     {
-        "type": "function",
-        "function": {
-            "name": "domain_asking",
-            "description": "Get information about effective time management",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "query": {
-                        "type": "string",
-                        "description": "The user's question about time management"
-                    }
-                },
-                "required": ["query"]
-            }
-        }
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "database_asking",
-            "description": "Get information about user's info, tasks or schedule",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "query": {
-                        "type": "string",
-                        "description": "The user's question about their information, their tasks or schedule"
-                    }
-                },
-                "required": ["query"]
-            }
-        }
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "saving_constraint",
-            "description": "Noting the time that user unavailable",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "noting": {
-                        "type": "string",
-                        "description": "The user's message for time constraint"
-                    }
-                },
-                "required": ["noting"]
-            }
-        }
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "reading_constraint",
-            "description": "Based on constraints, consider suggestion for scheduling",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "asking": {
-                        "type": "string",
-                        "description": "Asking for task scheduling"
-                    }
-                },
-                "required": ["asking"]
-            }
-        }
-    },
-    {
         "type":"function",
         "function": {
-            "name": "database_addtask",
+            "name": "add_single_task_to_database",
             "description": "Pass by parameters equivalent with information user gave you to ask their task",
             "parameters": {
                 "type":"object",
                 "properties": {
-                    "taskName":{
+                    "task_name":{
                         "type":"string",
                         "description":"Name of the task"
                     },
-                    "taskDescript": {
+                    "task_description": {
                         "type":"string",
                         "description":"Details description of the task."
                     },
-                    "startTime":{
+                    "start_time":{
                         "type":"string",
                         "description":"Start time of the task, formatted in ISO 8601 : %Y-%m-%dT%H:%M:%S.%fZ"
                     },
-                    "endTime":{
+                    "end_time":{
                         "type":"string",
                         "description":"End time of the task, formatted in ISO 8601 : %Y-%m-%dT%H:%M:%S.%fZ"
                     },
-                    "taskColor":{
+                    "color":{
                         "type":"string",
                         "description":"color when display the task"
-                    }    
+                    },
+                    "status":{
+                        "type":"string",
+                        "description":"status of the task"
+                    },
+                    "priority":{
+                        "type":"integer",
+                        "description":"priority of the task"
+                    }
                 },
                 "required":["taskName","startTime","endTime"]
             }
@@ -137,5 +77,6 @@ TOOLS = [
 
 FUNCTION_MAP = {
     "get_weather":get_weather,
-    "get_user_name":get_user_name
+    "get_user_name":get_user_name,
+    "add_single_task_to_database":add_single_task_to_database
 }

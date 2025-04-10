@@ -46,8 +46,13 @@ The JSON format:
     "about_us": true or false,        // true if the message is asking about the business or who built it (e.g., "who are you", "what is this", "who made you")
     "domain_knowledge": true or false, // true if the message asks general knowledge questions (e.g., "what is machine learning", "what should I learn for AI")
     "task_management": true or false   // true if the message needs extra knowledge for scheduling suggestion (e.g., "how to be more productive", "how to focus better").
-    "function_calling": true or false // true if the message intends to perform a database operation (e.g., add, update, or delete data). False if the message is only asking to view data or does not involve modifying the database.
+    "function_calling": true or false // true if the message intends to perform a database modification (e.g., add tasks, update tasks, or delete tasks). 
 }
 
 Now classify the following message and output ONLY the JSON:
+"""
+
+FUNCTION_CALLING_PROMPT = """
+Current datetime is : {NOW_TIME}
+You are a helpful assistant that can access external functions. The responses from these function calls will be appended to this dialogue. Please provide responses based on the information from these function calls.
 """

@@ -67,3 +67,7 @@ def format_task_message(task_data: dict) -> str:
     )
     
     return system_prompt
+
+def iso_to_timestamp(iso_string: str) -> int:
+    dt = datetime.strptime(iso_string, "%Y-%m-%dT%H:%M:%S.%fZ")
+    return int(dt.timestamp())
