@@ -25,6 +25,10 @@ def add_documents(collection_name: str, data):
     )
     return {"message": f"Added {len(data.documents)} documents to collection '{collection_name}'"}
 
+#khai bao mang knowledges va user_information
+knowledges = []
+user_information = {}
+
 def return_question(user_information:dict):
     job = user_information.get("job", "professional")
     questions = [
@@ -35,6 +39,7 @@ def return_question(user_information:dict):
         f"What productivity techniques help a {job} succeed?"
     ]
     return questions
+
 def search_knowledge(user_information: dict):
     # format user information
 
@@ -52,7 +57,7 @@ def search_knowledge(user_information: dict):
         f"What productivity techniques help a {job} succeed?"
     ]
 
-    knowledges = []
+    
     for question in questions:
         search_results = google_search(question)
         if search_results:
@@ -74,6 +79,10 @@ def chunk_text(text, chunk_size=300):
     words = text.split()
     chunks = [" ".join(words[i:i + chunk_size]) for i in range(0, len(words), chunk_size)]
     return chunks
+
+chunks = chunk_text(" ".join([knowledge["results"] for knowledge in knowledges]), chunk_size=300)
+question = return_question(user_information)
+
 def store_knowledge(knowledges):
     headers = {
     'accept': 'application/json',
@@ -85,8 +94,8 @@ def store_knowledge(knowledges):
     }
 
     json_data = {
-        'documents': chunk_text(return_question(user_information:dict), chunk_size=300),
-        'metadatas': return_question(user_information:dict)*len(chunk_text(questions[for question in questions], chunk_size=300)),
+        'documents':  chunks,
+        'metadatas': [question]*len(chunks),
     }
     collection_name = "knowledge_user"
     response = requests.post(
