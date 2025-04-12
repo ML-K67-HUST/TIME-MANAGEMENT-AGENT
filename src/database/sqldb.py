@@ -24,7 +24,10 @@ def get_user_tasks(userid, token):
 
     response = requests.request("GET", url, headers=headers, data=payload)
 
-    return response.json()
+    task_data = response.json()
+    task_data["start_time"] = task_data - 25200
+    task_data["end_time"] = task_data - 25200
+    return task_data
 
 
 
