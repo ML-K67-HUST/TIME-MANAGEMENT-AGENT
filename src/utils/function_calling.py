@@ -64,6 +64,19 @@ def add_single_task_to_database(
 
     response = requests.post(f'{settings.backend_url}/sqldb/tasks/', headers=headers, json=json_data)
     if response.status_code == 200:
+        # sent data to socket 
+        headers = {
+            'accept': 'application/json',
+            'Content-Type': 'application/json',
+        }
+
+        json_data = [response.json()["task"]]
+
+        socket_response = requests.post(f'{settings.backend_url}/trigger_task', headers=headers, json=json_data)
+        if socket_response.status_code == 200:
+            print("👌🏻 Socket sent response ")
+        else:
+            print("❌ Failed to send socke :< ",socket_response.text)
         tasks = response.json()
         tasks["task"]["start_time"] = start_time
         tasks["task"]["end_time"] = end_time
