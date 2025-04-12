@@ -70,4 +70,23 @@ def format_task_message(task_data: dict) -> str:
 
 def iso_to_timestamp(iso_string: str) -> int:
     dt = datetime.strptime(iso_string, "%Y-%m-%dT%H:%M:%S.%fZ")
-    return int(dt.timestamp())
+    return int(dt.timestamp())-25200
+
+def format_task_message_for_bot(data: dict) -> str:
+    if not data or "task" not in data:
+        return "No task data found."
+
+    task = data["task"]
+    lines = [
+        data.get("message", "Task info:"),
+        f"Detailed Information:",
+        f"User ID: {task.get('userid')}",
+        f"Name: {task.get('task_name')}",
+        f"Description: {task.get('task_description')}",
+        f"Start Time: {task.get('start_time')}",
+        f"End Time: {task.get('end_time')}",
+        f"Color: {task.get('color')}",
+        f"Status: {task.get('status')}",
+        f"Priority: {task.get('priority')}",
+    ]
+    return "\n".join(lines)

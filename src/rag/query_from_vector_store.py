@@ -43,10 +43,10 @@ def query_for_about_us(prompt, decider):
 def query_for_domain_knowledge(prompt,decider):
     if not decider:
         return "No need to retrieve tips for task management"
-    return ""
+    return "Nothing"
 
 
 def query_for_task_management_tips(prompt, decider):
     if not decider:
         return "No need to retrieve tips for task management"
-    return ""
+    return "Nothing"

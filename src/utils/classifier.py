@@ -33,7 +33,7 @@ def classify_prompt(prompt: str) -> bool:
         )
         response = client.chat.completions.create(
             # model="meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
-            model="gemini-1.5-flash",
+            model="gemini-2.0-flash",
             messages=[
                 {"role": "system", "content": CLASSIFIER_PROMPT},
                 {"role": "user", "content": prompt},

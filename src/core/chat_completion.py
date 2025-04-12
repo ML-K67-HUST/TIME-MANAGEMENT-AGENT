@@ -16,6 +16,7 @@ from rag.query_from_vector_store import (
     query_for_task_management_tips
 )
 from database.sqldb import *
+from database.discord import send_discord_notification
 import contextvars
 import functools
 import logging
@@ -87,14 +88,17 @@ async def generate_chat_completions(userid:int, token:str, prompt: str, history=
         TIME_MANAGEMENT=time_management_tips,
         DOMAIN_KNOWLEDGE=domain_knowledge
     )
+    send_discord_notification(
+        prompt, formatted_system_prompt
+    )
     
     logger.info(f"System prompt size: {len(formatted_system_prompt)} characters")
     # print(f"System prompt content: {formatted_system_prompt[:500]}... (truncated)")
-    print("FUNCTION CALLING: ",function_calling['result'])
-    logger.info(f"Component sizes - NOW_TIME: {len(str(now))}, MESSAGE: {len(str(function_calling['result']))}, "
-                f"ABOUT_US: {len(str(about_us))}, USER_INFO: {len(str(user_info))}, "
-                f"TASK_HISTORY: {len(str(task_history))}, TIME_MANAGEMENT: {len(str(time_management_tips))}, "
-                f"DOMAIN_KNOWLEDGE: {len(str(domain_knowledge))}")
+    # print("FUNCTION CALLING: ",function_calling['result'])
+    # logger.info(f"Component sizes - NOW_TIME: {len(str(now))}, MESSAGE: {len(str(function_calling['result']))}, "
+    #             f"ABOUT_US: {len(str(about_us))}, USER_INFO: {len(str(user_info))}, "
+    #             f"TASK_HISTORY: {len(str(task_history))}, TIME_MANAGEMENT: {len(str(time_management_tips))}, "
+    #             f"DOMAIN_KNOWLEDGE: {len(str(domain_knowledge))}")
     
     messages = [
         {
@@ -130,7 +134,7 @@ async def generate_chat_completions(userid:int, token:str, prompt: str, history=
         model="gemini-2.0-flash",
         messages=messages,
         temperature=0.7,
-        max_tokens=800,
+        max_tokens=5000,
     )
     logger.info(f"Time for LLM response: {time.time() - start_time_llm:.4f}s")
     # response = generate_chat_completion_openai(

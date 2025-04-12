@@ -2,7 +2,7 @@ import os
 import json
 import requests
 from datetime import datetime
-from utils.format_message import iso_to_timestamp
+from utils.format_message import iso_to_timestamp, format_task_message_for_bot
 from config import settings
 ### TEST
 def get_user_name():
@@ -16,15 +16,32 @@ def get_weather(latitude, longitude):
 def add_single_task_to_database(
         userid, 
         task_name:str,
-        task_description:str,
         start_time:int,
         end_time:int,
-        color:str,
-        status:str,
-        priority:int
+        task_description:str = "",
+        color:str = "#0000ff",
+        status:str = "pending",
+        priority:int = 0
     ):
     """
     Thêm task vào lịch, schema cho trước, dùng api query db
+
+	
+    Sample Response 
+    {
+    "message": "✅ Task created!",
+    "task": {
+        "taskid": "ccf1082c-5bbd-4134-90f9-7ef025f7b10f",
+        "userid": "7",
+        "task_name": "tét",
+        "task_description": "tét",
+        "start_time": 0,
+        "end_time": 10,
+        "color": "red",
+        "status": "pending",
+        "priority": 0
+    }
+    }
     """
     headers = {
         'accept': 'application/json',
@@ -47,7 +64,10 @@ def add_single_task_to_database(
 
     response = requests.post(f'{settings.backend_url}/sqldb/tasks/', headers=headers, json=json_data)
     if response.status_code == 200:
-        return response.json() 
+        tasks = response.json()
+        tasks["task"]["start_time"] = start_time
+        tasks["task"]["end_time"] = end_time
+        return format_task_message_for_bot(tasks)
     else:
         print("error, status code: ", response.status_code)
         print("detailed of error: ", response.text)

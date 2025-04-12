@@ -69,7 +69,7 @@ TOOLS = [
                         "description":"priority of the task"
                     }
                 },
-                "required":["taskName","startTime","endTime"]
+                "required":["task_name","start_time","end_time"]
             }
         }
     }

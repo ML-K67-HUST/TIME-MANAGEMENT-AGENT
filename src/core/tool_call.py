@@ -4,12 +4,14 @@ import time
 from config import settings
 from constants.tool_pool import FUNCTION_MAP, TOOL_TEST,TOOLS
 from constants.prompt_library import FUNCTION_CALLING_PROMPT
+from database.discord import send_discord_fc_notification
 from utils.format_message import get_current_time_info
 from database.caching import redis_cache
 
 client = openai.OpenAI(
-    api_key=settings.together_api_key,
-    base_url="https://api.together.xyz/v1",
+    api_key=settings.gemini_api_key,
+    # base_url="https://api.together.xyz/v1",
+    base_url=settings.gemini_base_url
 )
 
 FUNCTION_CACHE_TTL = 600
@@ -40,32 +42,43 @@ def execute_query(userid,query: str):
     ]
 
     completion = client.chat.completions.create(
+        model="gemini-1.5-flash",
         messages=messages,
-        model="meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
         tools=TOOLS,
-        temperature=0.1,  # Lower temperature for more deterministic outputs
-        max_tokens=300,   # Limit token generation to what's needed
-        top_p=0.9,        # Focus on more likely tokens
+        tool_choice="auto"
+        # temperature=0.1,  # Lower temperature for more deterministic outputs
+        # max_tokens=300,   # Limit token generation to what's needed
+        # top_p=0.9,        # Focus on more likely tokens
     )
 
     tool_calls = completion.choices[0].message.tool_calls
-    
+
+
+    print("tool calls: ",  tool_calls)
     result = {
         'function': None,
         'args': None,
-        'result': ""
+        'result': "You did nothing"
     }
 
     if tool_calls:
         function_name = tool_calls[0].function.name
         function_arguments = json.loads(tool_calls[0].function.arguments)
+        # print("FUNCTION ARGS: ",function_arguments)
         function_arguments["userid"] = userid
         if function_name in FUNCTION_MAP:
+            return_value = FUNCTION_MAP[function_name](**function_arguments)
             result = {
                 'function': function_name,
                 'args': function_arguments,
-                'result': FUNCTION_MAP[function_name](**function_arguments)
+                'result': return_value
             }
+            send_discord_fc_notification(
+                prompt=query,
+                function_name=function_name,
+                function_args=function_arguments,
+                result=return_value
+            )
 
     redis_cache.set(cache_key, result, ttl=FUNCTION_CACHE_TTL)
     
@@ -88,7 +101,7 @@ def execute_query_if_needed(userid, query: str, decider, force_execution=False):
     print(2)
     if not decider:
         return {
-            'result':"No need to execute database modification"
+            'result':"You did nothing"
         }
 
     

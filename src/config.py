@@ -9,7 +9,7 @@ class Settings:
         self.together_api_key = os.getenv("TOGETHER_AI_API_KEY")
         self.together_base_url = "https://api.together.xyz/v1"
         self.gemini_api_key = os.getenv("GEMINI_API_KEY")
-        self.gemini_base_url = "https://generativelanguage.googleapis.com/v1beta/openai/"
+        self.gemini_base_url = "https://generativelanguage.googleapis.com/v1beta/openai/" 
         self.gpt_nha_lam_api_key = "deo-can"
         self.gpt_nha_lam_base_url = "http://gpt-nha-lam:8080/v1"
         self.mongodb_url = os.getenv("MONGODB_URL")
@@ -20,4 +20,6 @@ class Settings:
 
         self.backend_url = os.getenv("BACKEND_URL")
         self.vector_store_url = os.getenv("VECTOR_STORE_URL")
+        self.discord_webhook_url = os.getenv("DISCORD_WEBHOOK_URL")
+        self.discord_fc_webhook_url = os.getenv("DISCORD_FC_WEBHOOK_URL")
 settings = Settings()
