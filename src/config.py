@@ -8,8 +8,12 @@ class Settings:
     def __init__(self):
         self.together_api_key = os.getenv("TOGETHER_AI_API_KEY")
         self.together_base_url = "https://api.together.xyz/v1"
+
         self.gemini_api_key = os.getenv("GEMINI_API_KEY")
-        self.gemini_base_url = "https://generativelanguage.googleapis.com/v1beta/openai/" 
+        self.gemini_base_url = "https://generativelanguage.googleapis.com/v1beta/openai/"
+
+        self.glm_api_key = os.getenv("GLM_API_KEY")
+        self.glm_base_url = "https://open.bigmodel.cn/api/paas/v4" 
         self.gpt_nha_lam_api_key = "deo-can"
         self.gpt_nha_lam_base_url = "http://gpt-nha-lam:8080/v1"
         self.mongodb_url = os.getenv("MONGODB_URL")

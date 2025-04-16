@@ -2,27 +2,24 @@ import openai
 import requests
 from config import settings
 
-async def generate_chat_completions( prompt: str,system_prompt : str):
+async def infer(
+    api_key,
+    base_url,
+    model_name,
+    messages
+):
     client = openai.OpenAI(
-        api_key=settings.together_api_key,
-        base_url="https://api.together.xyz/v1",
+        api_key=api_key,
+        base_url=base_url,
     )
-
-    messages = [
-        {"role": "system", "content": system_prompt},
-    ]
-
-    messages.append({
-        "role":"user",
-        "content": prompt,
-    })
-
 
     response = client.chat.completions.create(
-        model="meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+        model=model_name,
         messages=messages,
-        # stream=True,
+        temperature=0.7,
+        max_tokens=5000,
     )
+    return response
 
 
     # for batch in response:
@@ -51,3 +48,19 @@ def generate_chat_completion_openai(
     )
     print(response.text)
     return response.json()
+
+
+def generate_chat_completion_gemini(
+    messages,
+):
+    client = openai.OpenAI(
+        api_key=settings.gemini_api_key,
+        base_url=settings.gemini_base_url,
+    )
+    response = client.chat.completions.create(
+        model="gemini-2.0-flash",
+        messages=messages,
+        temperature=0.7,
+        max_tokens=5000,
+    )
+    return response

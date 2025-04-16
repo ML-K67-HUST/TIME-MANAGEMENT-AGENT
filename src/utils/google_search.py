@@ -2,7 +2,7 @@ import asyncio
 from googlesearch import search
 from constants.prompt_library import GG_SEARCH_SYSTEM_PROMPT
 import trafilatura
-from utils.chat import generate_chat_completions
+from utils.chat import infer
 import openai
 from config import settings
 def classify_prompt(prompt: str) -> bool:
@@ -29,10 +29,21 @@ async def process_post(post):
     extracted = await fetch_and_extract(post["url"])
     if not extracted:
         return None  
-
-    answer = await generate_chat_completions(
-        prompt=f"TITLE:{post['title']}\n\nCONTENT:{extracted}"[:5000],
-        system_prompt=GG_SEARCH_SYSTEM_PROMPT
+    messages = [
+        {
+            "role":"system",
+            "content":GG_SEARCH_SYSTEM_PROMPT
+        },
+        {
+            "role":"user",
+            "content":f"TITLE:{post['title']}\n\nCONTENT:{extracted}"[:5000]
+        }
+    ]
+    answer = await infer(
+        api_key=settings.together_api_key,
+        base_url=settings.together_base_url,
+        messages=messages,
+        model_name="meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
     )
 
     return {

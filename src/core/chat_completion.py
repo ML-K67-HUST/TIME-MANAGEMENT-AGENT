@@ -8,7 +8,7 @@ from core.tool_call import execute_query_if_needed
 from utils.format_message import *
 from utils.conversation import update_history
 from utils.user_cache import get_cached_user_info, get_cached_task_history, should_invalidate_task_cache, invalidate_task_cache
-from utils.chat import generate_chat_completion_openai
+from utils.chat import infer
 from utils.classifier import classify_prompt
 from rag.query_from_vector_store import (
     query_for_about_us,
@@ -36,10 +36,10 @@ async def generate_chat_completions(userid:int, token:str, prompt: str, history=
     # )
     decider = classify_prompt(prompt)
     print("#### DECIDER: #### ",decider)
-    client = openai.OpenAI(
-        api_key=settings.gemini_api_key,
-        base_url=settings.gemini_base_url,
-    )
+    # client = openai.OpenAI(
+    #     api_key=settings.gemini_api_key,
+    #     base_url=settings.gemini_base_url,
+    # )
     
 
     start_time_tasks = time.time()
@@ -130,11 +130,23 @@ async def generate_chat_completions(userid:int, token:str, prompt: str, history=
     #     max_tokens=800,
     # )
     start_time_llm = time.time()
-    response = client.chat.completions.create(
-        model="gemini-2.0-flash",
-        messages=messages,
-        temperature=0.7,
-        max_tokens=5000,
+    # response = client.chat.completions.create(
+    #     model="gemini-2.0-flash",
+    #     messages=messages,
+    #     temperature=0.7,
+    #     max_tokens=5000,
+    # )
+    # response = generate_chat_completions(
+    #     api_key=settings.gemini_api_key,
+    #     base_url=settings.gemini_base_url,
+    #     model_name="gemini-2.0-flash",
+    #     messages=messages
+    # )
+    response = await infer(
+        api_key=settings.glm_api_key,
+        base_url=settings.glm_base_url,
+        model_name="glm-4",
+        messages=messages
     )
     logger.info(f"Time for LLM response: {time.time() - start_time_llm:.4f}s")
     # response = generate_chat_completion_openai(
