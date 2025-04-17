@@ -35,3 +35,7 @@ async def call_function(query: Question):
 @router.post("/google_search")
 async def do_google_search(query: Question):
     return await get_google_search(query.text)
+
+@router.post("/vision")
+async def vision(query: Question):
+    return{"response": response.text}
