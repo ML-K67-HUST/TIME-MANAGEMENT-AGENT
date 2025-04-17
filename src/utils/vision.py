@@ -6,7 +6,7 @@ import requests
 image_path = "https://goo.gle/instrument-img"
 image = requests.get(image_path)
 
-client = genai.Client(api_key="AIzaSyDxy33gXMEJoJvKXCexD2R4ZH5Z5aRgyWI")
+client = genai.Client(api_key="")
 response = client.models.generate_content(
     model="gemini-2.0-flash-exp",
     contents=["What is this image?",
