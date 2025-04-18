@@ -143,9 +143,9 @@ async def generate_chat_completions(userid:int, token:str, prompt: str, history=
     #     messages=messages
     # )
     response = await infer(
-        api_key=settings.glm_api_key,
-        base_url=settings.glm_base_url,
-        model_name="glm-4",
+        api_key=settings.gemini_api_key,
+        base_url=settings.gemini_base_url,
+        model_name="gemini-2.0-flash",
         messages=messages
     )
     logger.info(f"Time for LLM response: {time.time() - start_time_llm:.4f}s")
