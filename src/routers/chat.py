@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Request
 from pydantic import BaseModel
 from typing import List, Dict
+from typing import Optional
 from constants.prompt_library import SYSTEM_PROMPT
 from core.chat_completion import generate_chat_completions
 from core.tool_call import execute_query
@@ -17,6 +18,7 @@ class Query(BaseModel):
     userid: int
     message: str
     token: str
+    img_url: Optional[str] = None
 
 class Question(BaseModel):
     text: str
@@ -29,7 +31,7 @@ async def chat_completions(query: Query):
     history_list = extract_chat_history(get_history(userid=query.userid, token=query.token))
     # return StreamingResponse(generate_chat_completions(query.message))
     return {
-        "message": await generate_chat_completions(query.userid, query.token, query.message, history_list)
+        "message": await generate_chat_completions(query.userid, query.token, query.message, history_list, image_url=query.img_url)
     }
 
 @router.post("/function_calling")

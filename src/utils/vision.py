@@ -4,7 +4,6 @@ from config import settings
 import requests
 import os
 
-query = "What is the instrument in the image?"
 def com_vision(url):
     client = genai.Client(api_key=settings.gemini_vision_api_key)
     query = "Describe the content of the image?"

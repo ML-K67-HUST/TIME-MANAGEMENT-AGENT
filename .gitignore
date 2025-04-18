@@ -2,3 +2,8 @@
 src/test.ipynb
 venv
 src/.env
+src/__pycache__/
+src/constants/__pycache__/
+src/core/__pycache__/
+src/routers/__pycache__/
+src/utils/__pycache__/

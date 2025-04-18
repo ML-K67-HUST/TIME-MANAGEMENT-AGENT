@@ -10,6 +10,7 @@ from utils.conversation import update_history
 from utils.user_cache import get_cached_user_info, get_cached_task_history, should_invalidate_task_cache, invalidate_task_cache
 from utils.chat import infer
 from utils.classifier import classify_prompt
+from utils.vision import com_vision
 from rag.query_from_vector_store import (
     query_for_about_us,
     query_for_domain_knowledge,
@@ -27,7 +28,7 @@ logger = logging.getLogger("chat_completion")
 
 background_tasks = set()
 
-async def generate_chat_completions(userid:int, token:str, prompt: str, history=[] , system_prompt=SYSTEM_PROMPT):
+async def generate_chat_completions(userid:int, token:str, prompt: str, history=[] ,image_url=None, system_prompt=SYSTEM_PROMPT):
     start_time_total = time.time()
     
     # client = openai.OpenAI(
@@ -79,6 +80,13 @@ async def generate_chat_completions(userid:int, token:str, prompt: str, history=
   
     start_time_format_messages = time.time()
     
+    img_info = "No image provided"
+    if image_url and image_url.startswith("http"):
+        start_time_about_us = time.time()
+        img_info = com_vision(image_url)
+        logger.info(f"Time to get img info: {time.time() - start_time_about_us:.4f}s")
+
+    
     formatted_system_prompt = system_prompt.format(
         NOW_TIME=now,
         MESSAGE=function_calling['result'],
@@ -86,7 +94,8 @@ async def generate_chat_completions(userid:int, token:str, prompt: str, history=
         USER_INFO=user_info, 
         TASK_HISTORY=task_history,
         TIME_MANAGEMENT=time_management_tips,
-        DOMAIN_KNOWLEDGE=domain_knowledge
+        DOMAIN_KNOWLEDGE=domain_knowledge,
+        PICTURE_DESCRIPTION=img_info
     )
     send_discord_notification(
         prompt, formatted_system_prompt
