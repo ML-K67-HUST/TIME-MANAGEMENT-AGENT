@@ -20,7 +20,8 @@ class Query(BaseModel):
 
 class Question(BaseModel):
     text: str
-class url(BaseModel):
+
+class Url(BaseModel):
     url: str
 @router.post("/chat_completion")
 async def chat_completions(query: Query):
@@ -40,5 +41,5 @@ async def do_google_search(query: Question):
     return await get_google_search(query.text)
 
 @router.post("/vision")
-async def get_vision(url: url):
+async def get_vision(url: Url):
     return{"response": com_vision(url.url)}
