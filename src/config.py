@@ -21,7 +21,7 @@ class Settings:
         self.chroma_endpoint = os.getenv("chroma_client_url")
         self.chroma_model = os.getenv("chroma_model")
         self.embedding_client_url = os.getenv("embedding_client_url")
-
+        self.gemini_vision_api_key = os.getenv("GEMINI_VISION_API_KEY")
         self.backend_url = os.getenv("BACKEND_URL")
         self.vector_store_url = os.getenv("VECTOR_STORE_URL")
         self.discord_webhook_url = os.getenv("DISCORD_WEBHOOK_URL")

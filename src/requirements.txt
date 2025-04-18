@@ -10,5 +10,6 @@ googlesearch-python
 trafilatura
 lxml-html-clean
 redis==5.0.1
+google-genai
 pymilvus==2.3.4
 gradio==4.31.0

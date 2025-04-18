@@ -6,6 +6,7 @@ from core.chat_completion import generate_chat_completions
 from core.tool_call import execute_query
 from utils.google_search import get_google_search
 from utils.conversation import get_history, extract_chat_history
+from utils.vision import com_vision
 router = APIRouter(prefix="/chat", tags=["chat"])
 
 class ChatHistoryItem(BaseModel):
@@ -19,6 +20,9 @@ class Query(BaseModel):
 
 class Question(BaseModel):
     text: str
+
+class Url(BaseModel):
+    url: str
 @router.post("/chat_completion")
 async def chat_completions(query: Query):
     # history_list = [item.dict() for item in query.history]
@@ -35,3 +39,7 @@ async def call_function(query: Question):
 @router.post("/google_search")
 async def do_google_search(query: Question):
     return await get_google_search(query.text)
+
+@router.post("/vision")
+async def get_vision(url: Url):
+    return{"response": com_vision(url.url)}
