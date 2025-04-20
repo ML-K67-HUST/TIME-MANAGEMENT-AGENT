@@ -6,7 +6,10 @@ async def infer(
     api_key,
     base_url,
     model_name,
-    messages
+    messages,
+    temperature=0.7,
+    max_tokens=5000,
+    stream=False,
 ):
     client = openai.OpenAI(
         api_key=api_key,
@@ -16,8 +19,8 @@ async def infer(
     response = client.chat.completions.create(
         model=model_name,
         messages=messages,
-        temperature=0.7,
-        max_tokens=5000,
+        temperature=temperature,
+        max_tokens=max_tokens,
     )
     return response
 
