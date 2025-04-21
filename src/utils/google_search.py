@@ -41,7 +41,7 @@ async def process_post(post):
     ]
     answer = await infer(
         api_key=settings.gemini_vision_api_key,
-        base_url=settings.gemini_api_key,
+        base_url=settings.gemini_base_url,
         messages=messages,
         model_name="gemini-2.0-flash"
     )
@@ -50,7 +50,7 @@ async def process_post(post):
         "title": post["title"],
         "url": post["url"],
         "detail": extracted,
-        "answer": answer
+        "answer": answer.choices[0].message.content
     }
 
 async def get_google_search(query: str, max_num_results=2):

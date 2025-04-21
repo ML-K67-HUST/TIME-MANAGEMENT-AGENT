@@ -38,8 +38,8 @@ Negative feels: @@, -.-, :<, :((, :(((
 
 GG_SEARCH_SYSTEM_PROMPT = """
 The content given is the raw text crawled from an url.
-If it relate to time management or productivity. Extract the main ideas, the key points of this content.
-Else if it is irrelevant to time management or productivity, just return `Nothing`
+Extract the main ideas, the key points of this content.
+Answer in Vietnamese.
 """
 
 CLASSIFIER_PROMPT = """
