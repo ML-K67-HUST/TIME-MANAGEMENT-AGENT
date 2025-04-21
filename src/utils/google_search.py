@@ -29,28 +29,28 @@ async def process_post(post):
     extracted = await fetch_and_extract(post["url"])
     if not extracted:
         return None  
-    # messages = [
-    #     {
-    #         "role":"system",
-    #         "content":GG_SEARCH_SYSTEM_PROMPT
-    #     },
-    #     {
-    #         "role":"user",
-    #         "content":f"TITLE:{post['title']}\n\nCONTENT:{extracted}"[:5000]
-    #     }
-    # ]
-    # answer = await infer(
-    #     api_key=settings.together_api_key,
-    #     base_url=settings.together_base_url,
-    #     messages=messages,
-    #     model_name="meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
-    # )
+    messages = [
+        {
+            "role":"system",
+            "content":GG_SEARCH_SYSTEM_PROMPT
+        },
+        {
+            "role":"user",
+            "content":f"TITLE:{post['title']}\n\nCONTENT:{extracted}"[:5000]
+        }
+    ]
+    answer = await infer(
+        api_key=settings.gemini_vision_api_key,
+        base_url=settings.gemini_api_key,
+        messages=messages,
+        model_name="gemini-2.0-flash"
+    )
 
     return {
         "title": post["title"],
         "url": post["url"],
         "detail": extracted,
-        # "answer": answer
+        "answer": answer
     }
 
 async def get_google_search(query: str, max_num_results=2):
