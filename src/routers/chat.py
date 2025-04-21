@@ -24,6 +24,7 @@ class Query(BaseModel):
 
 class Question(BaseModel):
     text: str
+    num_of_result: int
 
 class Url(BaseModel):
     url: str
@@ -54,7 +55,7 @@ async def call_function(query: Question):
 
 @router.post("/google_search")
 async def do_google_search(query: Question):
-    return await get_google_search(query.text)
+    return await get_google_search(query.text, query.num_of_result)
 
 @router.post("/vision")
 async def get_vision(url: Url):
