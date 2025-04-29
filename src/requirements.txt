@@ -13,3 +13,4 @@ redis
 google-genai
 pymilvus
 jinja2
+beautifulsoup4

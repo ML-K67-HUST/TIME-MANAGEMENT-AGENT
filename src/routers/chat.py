@@ -5,7 +5,7 @@ from typing import Optional
 from constants.prompt_library import SYSTEM_PROMPT
 from core.chat_completion import generate_chat_completions
 from core.tool_call import execute_query
-from utils.google_search import get_google_search
+from utils.google_search import get_google_search, get_vnexpress
 from utils.conversation import get_history, extract_chat_history
 from utils.vision import com_vision
 from utils.chat import infer
@@ -60,7 +60,9 @@ async def do_google_search(query: Question):
 @router.post("/vision")
 async def get_vision(url: Url):
     return{"response": com_vision(url.url)}
-
+@router.post("/vn_express")
+async def do_google_search(url: Url):
+    return await get_vnexpress(url.url)
 @router.post("/v1/chat/completions")
 async def gemini_openai_compatible(request: ChatCompletionRequest):
     """
