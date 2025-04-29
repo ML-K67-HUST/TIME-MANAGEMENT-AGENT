@@ -69,38 +69,44 @@ async def get_google_search(query: str, max_num_results=2):
 
     return [r for r in results if r]
 
-def is_outdated(date_str):
+def parse_date_get_timestamp(date_str):
     """
-    Kiểm tra bài viết có phải của hôm nay không.
-    Trả về True nếu đã cũ, False nếu trong hôm nay.
+    Trả về tuple (datetime object, int timestamp) từ string ngày giờ.
+    Nếu lỗi thì trả về (None, None)
     """
     try:
         # VD input: "Thứ ba, 29/4/2025, 10:53 (GMT+7)"
-        # Tách phần ngày giờ: "29/4/2025, 10:53"
         parts = date_str.split(", ")
-        if len(parts) < 2:
-            return True  # không đúng định dạng
+        if len(parts) < 3:
+            return None, None
+        # date_part = "29/4/2025"
+        # time_part = "10:53"
+        date_part = parts[1]
+        time_part = parts[2].split(" ")[0]
 
-        date_part = parts[1]  # "29/4/2025"
-        date_str_clean = date_part.split(" ")[0]  # chỉ lấy phần "29/4/2025"
-
-        # Parse về datetime
-        article_date = datetime.strptime(date_str_clean, "%d/%m/%Y").date()
-        today = datetime.now().date()
-
-        return article_date != today
+        datetime_str = f"{date_part} {time_part}"  # "29/4/2025 10:53"
+        dt = datetime.strptime(datetime_str, "%d/%m/%Y %H:%M")
+        timestamp = int(dt.timestamp())-25200
+        return dt, timestamp
     except Exception as e:
-        print(f"⚠️ Lỗi khi parse date: {e}")
-        return True  # nếu lỗi thì coi là outdate
+        print(f"⚠️ Lỗi khi parse datetime: {e}")
+        return None, None
 
-async def get_vnexpress(url:str):
+def is_outdated(date_str):
+    try:
+        dt, _ = parse_date_get_timestamp(date_str)
+        if not dt:
+            return True
+        return dt.date() != datetime.now().date()
+    except:
+        return True
+
+async def get_vnexpress(url: str):
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
     }
 
-    # base_url = "https://vnexpress.net/khoa-hoc-cong-nghe/ai"
     response = requests.get(url, headers=headers)
-
     results = []
 
     if response.status_code == 200:
@@ -113,10 +119,8 @@ async def get_vnexpress(url:str):
                 article_url = a_tag['href']
                 print(f"\n📰 Crawling Article {idx}: {article_url}")
 
-                # Truy cập từng bài báo
                 article_resp = requests.get(article_url, headers=headers)
                 if article_resp.status_code == 200:
-
                     article_soup = BeautifulSoup(article_resp.text, 'html.parser')
                     sidebar_div = article_soup.find("div", class_="sidebar-1")
 
@@ -124,43 +128,39 @@ async def get_vnexpress(url:str):
                         header = ""
                         content_parts = []
                         date = ""
+                        timestamp = None
+                        image = None
 
-                        # Lấy span class="date"
                         span_tag = sidebar_div.find("span", class_="date")
                         if span_tag:
                             date = span_tag.get_text(strip=True)
+                            dt, timestamp = parse_date_get_timestamp(date)
+                            if is_outdated(date):
+                                continue
 
-                        if is_outdated(date):
-                            continue
-                        # Lấy h1
                         h1_tag = sidebar_div.find("h1")
                         if h1_tag:
                             header = h1_tag.get_text(strip=True)
 
-                        # Lấy ảnh
                         img_tags = sidebar_div.find_all("img")
-                        # print(img_tags)
                         for img in img_tags:
                             if img.has_attr('data-src'):
-                                # print(img)
-                                image = (img['data-src'].replace("amp;",""))
-                            else: 
-                              image = (img['src'].replace("amp;",""))
+                                image = img['data-src'].replace("amp;", "")
+                            elif img.has_attr('src'):
+                                image = img['src'].replace("amp;", "")
 
-                        # Lấy p
                         p_tags = sidebar_div.find_all("p")
                         for p in p_tags:
                             text = p.get_text(strip=True)
                             if text:
                                 content_parts.append(text)
 
-
-                        # Gộp thành dict
                         article_data = {
                             "header": header,
                             "image": image,
                             "content": "\n".join(content_parts),
-                            "date": date
+                            "date": date,
+                            "timestamp": timestamp
                         }
                         results.append(article_data)
                     else:
@@ -168,7 +168,7 @@ async def get_vnexpress(url:str):
                 else:
                     print(f"❌ Lỗi khi truy cập bài báo, status code: {article_resp.status_code}")
 
-                time.sleep(1)  # Sleep 1s giữa mỗi bài để tránh bị chặn IP
+                time.sleep(1)
     else:
         print(f"❌ Lỗi khi tải trang chủ AI, status code: {response.status_code}")
 
