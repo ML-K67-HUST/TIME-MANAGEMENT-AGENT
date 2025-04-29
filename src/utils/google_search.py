@@ -156,6 +156,7 @@ async def get_vnexpress(url: str):
                                 content_parts.append(text)
 
                         article_data = {
+                            "query": url,
                             "header": header,
                             "image": image,
                             "content": "\n".join(content_parts),
