@@ -9,7 +9,32 @@ from bs4 import BeautifulSoup
 import time
 import requests
 from datetime import datetime
+import hashlib
+import typing
 
+def hash_url(url: str, algorithm: str = 'sha256') -> typing.Optional[str]:
+  try:
+    if not isinstance(url, str):
+      print("Lỗi: Đầu vào phải là một chuỗi URL.")
+      return None
+
+    url_bytes = url.encode('utf-8')
+
+    hasher = hashlib.new(algorithm)
+
+    hasher.update(url_bytes)
+
+    hex_digest = hasher.hexdigest()
+
+    return hex_digest
+
+  except ValueError:
+    print(f"Lỗi: Thuật toán '{algorithm}' không được hỗ trợ bởi hashlib.")
+    return None
+  except Exception as e:
+    print(f"Đã xảy ra lỗi không mong muốn: {e}")
+    return None
+  
 def classify_prompt(prompt: str) -> bool:
     client = openai.OpenAI(
         api_key=settings.together_api_key,
@@ -156,6 +181,8 @@ async def get_vnexpress(url: str):
                                 content_parts.append(text)
 
                         article_data = {
+                            "article_url": article_url,
+                            "hash_id": hash_url(article_url),
                             "query": url,
                             "header": header,
                             "image": image,
