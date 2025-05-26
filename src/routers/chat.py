@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from typing import List, Dict
 from typing import Optional
 from constants.prompt_library import SYSTEM_PROMPT
-from core.chat_completion import generate_chat_completions
+from core.chat_completion_v2 import generate_chat_completions
 from core.tool_call import execute_query
 from utils.google_search import get_google_search, get_vnexpress
 from utils.conversation import get_history, extract_chat_history

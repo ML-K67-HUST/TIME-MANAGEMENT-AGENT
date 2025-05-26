@@ -26,4 +26,6 @@ class Settings:
         self.vector_store_url = os.getenv("VECTOR_STORE_URL")
         self.discord_webhook_url = os.getenv("DISCORD_WEBHOOK_URL")
         self.discord_fc_webhook_url = os.getenv("DISCORD_FC_WEBHOOK_URL")
+
+        self.main_llm_model = "gemini-2.0-flash"
 settings = Settings()

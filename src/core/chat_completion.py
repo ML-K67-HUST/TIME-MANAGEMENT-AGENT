@@ -35,13 +35,19 @@ async def generate_chat_completions(userid:int, token:str, prompt: str, history=
     #     api_key=settings.together_api_key,
     #     base_url="https://api.together.xyz/v1",
     # )
-    decider = classify_prompt(prompt)
+    decider = classify_prompt(prompt) # classify the prompt into different categories
     print("#### DECIDER: #### ",decider)
     # client = openai.OpenAI(
     #     api_key=settings.gemini_api_key,
     #     base_url=settings.gemini_base_url,
     # )
     
+    about_us = ""
+    domain_knowledge = ""
+    time_management_tips = ""
+    function_calling = {
+        "result": ""
+    }
 
     start_time_tasks = time.time()
     user_info_task = asyncio.create_task(get_user_info_async(userid, token))
@@ -154,7 +160,7 @@ async def generate_chat_completions(userid:int, token:str, prompt: str, history=
     response = await infer(
         api_key=settings.gemini_api_key,
         base_url=settings.gemini_base_url,
-        model_name="gemini-2.0-flash",
+        model_name=settings.main_llm_model,
         messages=messages
     )
     logger.info(f"Time for LLM response: {time.time() - start_time_llm:.4f}s")

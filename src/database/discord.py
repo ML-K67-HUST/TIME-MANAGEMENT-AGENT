@@ -30,11 +30,11 @@ QUESTION : {prompt}
     response = requests.post(webhook_url, json=data)
 
     for chunk in chunks:
-        print(f"🧩 Sending chunk with {len(chunk)} chars")
+        print(f"🧩 Sending discord chunk with {len(chunk)} chars")
         data = {"content": chunk}
         response = requests.post(webhook_url, json=data)
         if response.status_code == 204:
-            print("✅ Sent successfully!")
+            print("✅ Sent discord chunk successfully!")
         else:
             print(f"❌ Failed to send: {response.status_code}, {response.text}")
 
